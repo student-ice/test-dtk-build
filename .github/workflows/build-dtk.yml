@@ -1,0 +1,57 @@
+name: build deb
+run-name: Github Action is building Debian Packages
+on: [push]
+jobs: 
+    build: 
+        runs-on: ubuntu-22.04
+        steps:
+              
+            - name: Build and Install dtkcommon
+              run: |
+                  echo -e "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse\n" | sudo tee /etc/apt/sources.list
+                  echo -e "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse\n" | sudo tee -a /etc/apt/sources.list
+                  echo -e "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse\n" | sudo tee -a /etc/apt/sources.list
+                  echo -e "deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse\n" | sudo tee -a /etc/apt/sources.list
+                  sudo apt update
+                  git clone https://github.com/linuxdeepin/dtkcommon.git
+                  cd dtkcommon
+                  sudo apt build-dep .
+                  sudo dpkg-buildpackage -us -uc -b
+                  cd ../
+                  sudo apt install ./*.deb
+                  
+            - name: Build and Install dtkcore
+              run: |
+                  git clone https://github.com/linuxdeepin/dtkcore.git
+                  cd dtkcore
+                  sudo apt build-dep .
+                  sudo dpkg-buildpackage -us -uc -b
+                  cd ../
+                  sudo apt install ./*.deb
+
+            - name: Build and Install dtkgui
+              run: |
+                  git clone https://github.com/linuxdeepin/dtkgui.git
+                  cd dtkgui
+                  sudo apt build-dep .
+                  sudo dpkg-buildpackage -us -uc -b
+                  cd ../
+                  sudo apt install ./*.deb
+                  
+            - name: Build and Install dtkwidget
+              run: |
+                  git clone https://github.com/linuxdeepin/dtkwidget.git
+                  cd dtkwidget
+                  sudo apt build-dep .
+                  sudo dpkg-buildpackage -us -uc -b
+                  cd ../
+                  sudo apt install ./*.deb
+
+            - name: Build and Install dtkdeclarative
+              run: |
+                  git clone -b https://github.com/linuxdeepin/dtkdeclarative.git
+                  cd dtkdeclarative
+                  sudo apt build-dep .
+                  sudo dpkg-buildpackage -us -uc -b
+                  cd ../
+                  sudo apt install ./*.deb
